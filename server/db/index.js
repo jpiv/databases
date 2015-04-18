@@ -50,9 +50,10 @@ exports.insertUser = function (connection, user, callback) {
     if(!exists) {
       connection.query('INSERT into users SET ?', userObj, function (err, result) {
         if (err) console.log(err);
-        else callback(result);
+        else callback(true);
       });
     } else {
+      callback(false);
       console.log('User already exists');
     }
   });
@@ -67,10 +68,20 @@ exports.getMessages = function (connection, callback) {
 
 exports.insertMessage = function (connection, messageObj, callback) {
 
-      connection.query('INSERT into messages SET ?', messageObj, function (err, result) {
-        if (err) console.log(err);
-        else callback(result);
-      });
+      exports.getUser(connection, messageObj.username, function(rows) {
+
+        var newMessageObj = {
+          user_id: rows[0].user_id,
+          message: messageObj.message
+        };
+
+        connection.query('INSERT into messages SET ?', newMessageObj, function (err, result) {
+          if (err) console.log(err);
+          else callback(result);
+        });
+
+      })
+
 
 };
 

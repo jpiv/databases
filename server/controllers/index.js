@@ -19,12 +19,24 @@ var db = require('../db');
 
 module.exports = {
   messages: {
-    get: function () {}, // a function which produces all the messages
+    get: function (req, res) {
+      db.connect(function(connection) {
+         db.getMessages(connection, function(result) {
+           console.log('Message added');
+           console.log(result);
+           db.disconnect(connection);
+           res.status(200);
+           res.json(result)
+           res.end();
+         });
+      });
+    }, // a function which produces all the messages
     post: function (req, res) {
       db.connect(function(connection) {
-         db.insertMessages (connection, req.body, function(res) {
-           console.log(res);
-           db.disconnect();
+         db.insertMessage(connection, req.body, function(result) {
+           console.log('Message added');
+           console.log(result);
+           db.disconnect(connection);
            res.status(201).end();
          });
       });
@@ -36,9 +48,10 @@ module.exports = {
     get: function () {},
     post: function (req, res) {
       db.connect(function(connection) {
-         db.insertUser (connection, req.body.username, function(res) {
-           console.log(res);
-           db.disconnect();
+         db.insertUser (connection, req.body.username, function(result) {
+           console.log('User added');
+           console.log(result);
+           db.disconnect(connection);
            res.status(201).end();
          });
       });
