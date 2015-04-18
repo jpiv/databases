@@ -37,7 +37,8 @@ var app = {
       // data:{order:'-createdAt', limit:20, where:'{"roomname":"'+app.currentRoom+'"}'},
       success: function (data) {
         $("#chats").html('');
-        data = JSON.parse(data);
+        data = data;
+        console.log('Data received: ');
         _.each(data.results, function(obj){
           app.addMessage(obj);
         });
@@ -136,7 +137,7 @@ $(document).ready(function(){
   $('.submit').on('click', function(event) {
     event.preventDefault();
     var message = {
-      'username': window.location.search.split('=')[1],
+      'username': 'Valjean',
       'text': $('#chatbox').val(),
       'roomname': app.currentRoom
     };

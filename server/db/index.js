@@ -60,7 +60,7 @@ exports.insertUser = function (connection, user, callback) {
 };
 
 exports.getMessages = function (connection, callback) {
-  connection.query('SELECT * from messages', function (err, rows, fields) {
+  connection.query('SELECT * from messages NATURAL JOIN users', function (err, rows, fields) {
     if (err) console.log(err);
     else callback(rows);
   });
@@ -72,24 +72,18 @@ exports.insertMessage = function (connection, messageObj, callback) {
 
         var newMessageObj = {
           user_id: rows[0].user_id,
-          message: messageObj.message
+          message: messageObj.text
         };
 
         connection.query('INSERT into messages SET ?', newMessageObj, function (err, result) {
           if (err) console.log(err);
           else callback(result);
         });
-
-      })
-
-
+      });
 };
 
-
-// exports.connect(function(connection) {
-//   exports.insertUser(connection, 'Fred', function(res) {
-//     console.log(res)
-//   });
-// });
+exports.connect(function(connection) {
+  exports.getMessages(connection, function(){});
+});
 
 

@@ -1,6 +1,6 @@
 var models = require('../models');
 var bluebird = require('bluebird');
-
+var _ = require("underscore");
 var db = require('../db');
 
 // module.exports = {
@@ -20,13 +20,17 @@ var db = require('../db');
 module.exports = {
   messages: {
     get: function (req, res) {
+      console.log('Get message received');
+      var results;
       db.connect(function(connection) {
-         db.getMessages(connection, function(result) {
-           console.log('Message added');
-           console.log(result);
+         db.getMessages(connection, function(rows) {
            db.disconnect(connection);
+           results = _.map(rows, function (row) {
+            return {username: row.username, text: row.message};
+           });
+           console.log(results);
            res.status(200);
-           res.json(result)
+           res.json({results: results.reverse()});
            res.end();
          });
       });
@@ -35,7 +39,6 @@ module.exports = {
       db.connect(function(connection) {
          db.insertMessage(connection, req.body, function(result) {
            console.log('Message added');
-           console.log(result);
            db.disconnect(connection);
            res.status(201).end();
          });
